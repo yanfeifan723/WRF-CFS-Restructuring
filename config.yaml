@@ -1,0 +1,69 @@
+# WRF-CFS Data Processing Configuration
+
+# Input/Output Paths
+input_path: "/raid62/Seasonal-Forecast/WRF-CFS-new"
+output_path: "/raid61/ffyan/WRF_CFS_processed"
+
+# Processing Parameters
+pressure_levels: [850, 200]  # hPa 
+years: [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+# years: [2012, 2013]
+season_months: [6, 7, 8]  # JJA (June, July, August)
+
+# Variables to process
+variables:
+  - name: GHT_PL
+    output_name: ght
+    file_pattern: "wrfoutPL_d01.*.nc"
+    has_pressure_levels: true
+  - name: U_PL
+    output_name: u
+    file_pattern: "wrfoutPL_d01.*.nc"
+    has_pressure_levels: true
+  - name: V_PL
+    output_name: v
+    file_pattern: "wrfoutPL_d01.*.nc"
+    has_pressure_levels: true
+  - name: RAINNC
+    output_name: rain
+    file_pattern: "wrfout_d01_*"
+    has_pressure_levels: false
+    combine_with: RAINC  # 总降水 = RAINNC + RAINC (+ RAINSH，如果存在)
+
+# Domain Configuration (Extended East Asia)
+domain:
+  lat_min: 10
+  lat_max: 60
+  lon_min: 70
+  lon_max: 140
+
+# Target Grid Configuration
+target_grid:
+  resolution: 1  # degrees
+  method: "scipy"  # fast scipy interpolation (no ESMF/xESMF dependency)
+
+# Parallel Processing（全量运行配置）
+# 目标：在保证稳定的前提下提速；80核/251G内存
+parallel:
+  n_threads: 20           # 降低线程，减轻内存和上下文切换
+  max_variable_workers: 1  # 变量串行，避免并发写冲突
+  max_year_workers: 20     # 年份并行度，充分利用80核CPU
+
+# Data Processing
+chunking:
+  time: 48  # 两天一批，降低单批内存占用
+  lat: 50  # Reduced from 100
+  lon: 50  # Reduced from 100
+
+# Output Configuration
+output:
+  compression: true
+  complevel: 1  # 低压缩，写入更快，科研可接受
+  # Note: variable_prefix is no longer used in multi-variable processing
+  # Each variable is configured in the 'variables' section above
+  
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  console: true
+  file: true

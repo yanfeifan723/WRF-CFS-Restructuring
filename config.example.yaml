@@ -1,0 +1,67 @@
+# WRF-CFS Data Processing Configuration (example)
+#
+# Copy to `config.yaml` and edit paths for your environment.
+
+# Input/Output Paths
+input_path: "./input/WRF-CFS-new"
+output_path: "./output/WRF_CFS_processed"
+
+# Processing Parameters
+pressure_levels: [850, 200]  # hPa
+years: [2012, 2013]          # example; extend as needed
+season_months: [6, 7, 8]     # JJA (June, July, August)
+
+# Variables to process
+variables:
+  - name: GHT_PL
+    output_name: ght
+    file_pattern: "wrfoutPL_d01.*.nc"
+    has_pressure_levels: true
+  - name: U_PL
+    output_name: u
+    file_pattern: "wrfoutPL_d01.*.nc"
+    has_pressure_levels: true
+  - name: V_PL
+    output_name: v
+    file_pattern: "wrfoutPL_d01.*.nc"
+    has_pressure_levels: true
+  - name: RAINNC
+    output_name: rain
+    file_pattern: "wrfout_d01_*"
+    has_pressure_levels: false
+    combine_with: RAINC  # total precipitation = RAINNC + RAINC (+ RAINSH if exists)
+
+# Domain Configuration (Extended East Asia)
+domain:
+  lat_min: 10
+  lat_max: 60
+  lon_min: 70
+  lon_max: 140
+
+# Target Grid Configuration
+target_grid:
+  resolution: 1  # degrees
+  method: "scipy"
+
+# Parallel Processing
+parallel:
+  n_threads: 20
+  max_variable_workers: 1
+  max_year_workers: 20
+
+# Data Processing
+chunking:
+  time: 48
+  lat: 50
+  lon: 50
+
+# Output Configuration
+output:
+  compression: true
+  complevel: 1
+
+# Logging
+logging:
+  level: "INFO"
+  console: true
+  file: true

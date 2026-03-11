@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.venv/
+venv/
+ENV/
+env/
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs / temp / locks
+*.log
+*.lock
+*.tmp
+*.swp
+*~
+
+# Scientific / data artifacts (keep repo light)
+*.nc
+*.nc4
+*.h5
+*.hdf5
+*.grib
+*.grb
+*.grb2
+*.zarr/
+
+# Project-specific outputs / backups
+wrf_processed_backup/
+*_backup.py
+*.backup.*
+process_wrf_cfs.backup.py

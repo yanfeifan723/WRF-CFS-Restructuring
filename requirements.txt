@@ -1,0 +1,8 @@
+numpy
+xarray
+scipy
+PyYAML
+filelock
+
+# Recommended for better NetCDF support/performance with xarray
+netCDF4
